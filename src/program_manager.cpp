@@ -55,7 +55,7 @@ void startProgram(const Program& program) {
   programRunning = true;
   programStartTime = millis();
   currentStage = 0;
-  stageStartTime = millis();
+  stageStartTime = programStartTime;
   remainingTime = currentProgram.stages[0].duration * 60;
   setTargetTemperature(currentProgram.stages[0].temperature);
 }
@@ -86,19 +86,22 @@ void updateProgram() {
     return;
   }
 
-  const unsigned long elapsedTime = (millis() - stageStartTime) / 1000;
-  if (elapsedTime >= remainingTime) {
+  const unsigned long currentMillis = millis();
+  const unsigned long stageDuration = currentProgram.stages[currentStage].duration * 60UL;
+  const unsigned long elapsedTime = (currentMillis - stageStartTime) / 1000UL;
+
+  if (elapsedTime >= stageDuration) {
     ++currentStage;
     if (currentStage >= static_cast<int>(currentProgram.numStages)) {
       stopProgram();
       return;
     }
 
-    stageStartTime = millis();
+    stageStartTime = currentMillis;
     remainingTime = currentProgram.stages[currentStage].duration * 60;
     setTargetTemperature(currentProgram.stages[currentStage].temperature);
     return;
   }
 
-  remainingTime = currentProgram.stages[currentStage].duration * 60 - elapsedTime;
+  remainingTime = stageDuration - elapsedTime;
 }

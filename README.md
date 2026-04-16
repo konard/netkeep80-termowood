@@ -2,6 +2,7 @@
 
 [![Статус проекта](https://img.shields.io/badge/статус-в_разработке-orange)](https://gitverse.ru/netkeep80/termowood)
 [![ESP8266](https://img.shields.io/badge/платформа-ESP8266-green)](https://gitverse.ru/netkeep80/termowood)
+[![Firmware CI](https://github.com/netkeep80/termowood/actions/workflows/ci.yml/badge.svg)](https://github.com/netkeep80/termowood/actions/workflows/ci.yml)
 [![Лицензия](https://img.shields.io/badge/лицензия-UNLICENSE-blue)](LICENSE)
 
 ## 📌 Описание проекта
@@ -98,6 +99,22 @@ lib_deps =
   ESP8266HTTPClient
   ESP8266WebServer
   EEPROM
+```
+
+## ✅ CI/CD и тестирование
+В GitHub Actions настроен workflow `Firmware CI`, который запускается для pull request, push в `main` и вручную через `workflow_dispatch`.
+
+Проверки выполняют два независимых шага:
+- `pio run -e d1_mini` собирает прошивку для ESP8266 D1 mini.
+- `pio test -e native` запускает native-симуляцию логики прошивки с моками Arduino/EEPROM/управления температурой.
+
+После успешной сборки workflow публикует артефакт `d1-mini-firmware` с файлами `firmware.bin` и `firmware.elf`.
+
+Локально те же проверки можно запустить так:
+
+```bash
+pio run -e d1_mini
+pio test -e native
 ```
 
 ## 📁 Структура проекта
